@@ -51,9 +51,6 @@ class ServiceProvider extends BaseServiceProvider
         $this->registerTranslations();
         $this->registerConfigurations();
 
-        if(! $this->app->routesAreCached() && config('password.routes')) {
-            $this->registerRoutes();
-        }
     }
 
     /**
@@ -135,28 +132,6 @@ class ServiceProvider extends BaseServiceProvider
         $this->publishes([
             $this->packagePath('config/config.php') => config_path('password.php'),
         ], 'config');
-    }
-
-    /**
-     * Register the package routes
-     *
-     * @warn consider allowing routes to be disabled
-     * @see http://laravel.com/docs/5.1/routing
-     * @see http://laravel.com/docs/5.1/packages#routing
-     * @return void
-     */
-    protected function registerRoutes()
-    {
-        $this->app['router']->group([
-            'namespace' => __NAMESPACE__
-        ], function($router) {
-            // index action showing the packages
-            $router->any('/password', [
-                'as'   => 'password:index',
-                'uses' => 'Controllers\PasswordController@index'
-            ]);
-
-        });
     }
 
     /**
