@@ -22,6 +22,16 @@ trait CanChangePassword
         return $this->save();
     }
 
+    public function setPasswordAttribute($value)
+    {
+        if ($value) {
+            $this->attributes['password'] = $value;
+            $this->password_last_set = new Carbon();
+        }
+
+        return true;
+    }
+
     /**
      * @param null $durationInDays
      * @return bool
