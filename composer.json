@@ -17,10 +17,11 @@
         }
     ],
     "require": {
-        "php" : ">=5.5.0",
-        "illuminate/auth": "~5.1",
-        "illuminate/support": "~5.1",
-        "illuminate/database": "~5.1",
+        "php": ">=5.5.9",
+        "illuminate/auth": "~5.2",
+        "illuminate/support": "~5.2",
+        "illuminate/database": "~5.2",
+        "edvinaskrucas/notification": "5.*",
         "nesbot/carbon": "~1.19"
     },
     "require-dev": {
