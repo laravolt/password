@@ -6,7 +6,7 @@ use Carbon\Carbon;
 trait CanChangePassword
 {
     /**
-     * @param $password
+     * @param      $password
      * @param bool $mustBeChanged
      * @return $this
      */
@@ -38,14 +38,15 @@ trait CanChangePassword
      */
     public function passwordMustBeChanged($durationInDays = null)
     {
-        $durationInDays = (int) $durationInDays;
-        if($durationInDays != null && $this->password_last_set != null){
-            $expired = $this->password_last_set->addDays($durationInDays);
-
-            return $expired->lte(Carbon::now());
+        if ($durationInDays === null) {
+            return false;
         }
 
-        return $this->password_last_set == null;
+        if ($this->password_last_set === null) {
+            return true;
+        }
+
+        return $this->password_last_set->addDays((int)$durationInDays)->lte(Carbon::now());
     }
 
     public function getEmailForNewPassword()
