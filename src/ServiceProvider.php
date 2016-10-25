@@ -66,9 +66,13 @@ class ServiceProvider extends BaseServiceProvider
      */
     protected function registerMigrations()
     {
-        $this->publishes([
-            $this->packagePath('database/migrations') => database_path('/migrations')
-        ], 'migrations');
+        if (version_compare($this->app->version(), '5.3.0', '>=')) {
+            $this->loadMigrationsFrom($this->packagePath('database/migrations'));
+        } else {
+            $this->publishes([
+                $this->packagePath('database/migrations') => database_path('/migrations')
+            ], 'migrations');
+        }
     }
 
     /**
