@@ -2,7 +2,6 @@
 namespace Laravolt\Password;
 
 use Closure;
-use Krucas\Notification\Facades\Notification;
 
 class CheckPassword
 {
@@ -20,8 +19,7 @@ class CheckPassword
         }
 
         if(auth()->user()->passwordMustBeChanged(config('password.duration'))) {
-            Notification::warning(trans('password::password.must_change_password'));
-            return redirect(config('password.redirect'));
+            return redirect(config('password.redirect'))->withWarning(trans('password::password.must_change_password'));
         }
 
         return $next($request);

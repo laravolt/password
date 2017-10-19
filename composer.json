@@ -21,7 +21,6 @@
         "illuminate/auth": "~5.2",
         "illuminate/support": "~5.2",
         "illuminate/database": "~5.2",
-        "edvinaskrucas/notification": "5.*",
         "nesbot/carbon": "~1.19"
     },
     "require-dev": {
@@ -43,6 +42,14 @@
     "extra": {
         "branch-alias": {
             "dev-master": "1.0-dev"
+        },
+        "laravel": {
+            "providers": [
+                "Laravolt\\Password\\ServiceProvider"
+            ],
+            "aliases": {
+                "Password": "Laravolt\\Password\\Facade"
+            }
         }
     }
 }
