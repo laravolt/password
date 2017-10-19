@@ -13,7 +13,7 @@ class AddPasswordLastSetToUsers extends Migration
     public function up()
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->timestamp('password_last_set')->nullable();
+            $table->timestamp('password_last_set')->nullable()->after('password');
         });
     }
 
