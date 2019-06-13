@@ -34,15 +34,10 @@ class ServiceProvider extends BaseServiceProvider
      */
     public function boot()
     {
-        $this->registerViews();
-
-        $this->publishes([
-            $this->packagePath('database/migrations/add_password_last_set_to_users.php') => $this->getMigrationFileName(),
-        ], 'migrations');
-
-        $this->loadTranslationsFrom($this->packagePath('resources/lang'), 'password');
-
-        $this->registerConfigurations();
+        $this->bootViews();
+        $this->bootMigrations();
+        $this->bootTranslations();
+        $this->bootConfigurations();
     }
 
     /**
@@ -50,7 +45,7 @@ class ServiceProvider extends BaseServiceProvider
      *
      * @return void
      */
-    protected function registerViews()
+    protected function bootViews()
     {
         $this->loadViewsFrom($this->packagePath('resources/views'), 'password');
 
@@ -59,12 +54,22 @@ class ServiceProvider extends BaseServiceProvider
         ], 'views');
     }
 
-    /**
-     * Register the package configurations
-     *
-     * @return void
-     */
-    protected function registerConfigurations()
+    protected function bootMigrations()
+    {
+        $this->publishes(
+            [
+                $this->packagePath('database/migrations/add_password_last_set_to_users.php') => $this->getMigrationFileName(),
+            ],
+            'migrations'
+        );
+    }
+
+    protected function bootTranslations()
+    {
+        $this->loadTranslationsFrom($this->packagePath('resources/lang'), 'password');
+    }
+
+    protected function bootConfigurations()
     {
         $this->mergeConfigFrom(
             $this->packagePath('config/config.php'), 'password'

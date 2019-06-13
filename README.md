@@ -1,6 +1,17 @@
 # laravolt/password
 Laravel password extended
 
+## Installation
+
+### Install Package
+`composer require laravolt/password`
+
+### Publish Migrations
+`php artisan vendor:publish --tag=migrations --provider="Laravolt\Password\ServiceProvider"`
+
+## Usage
+[todo]
+
 ## Fitur
 - Membuat password acak dengan berbagai metode
 - Admin bisa mengganti password user dan mengirim password baru via email
