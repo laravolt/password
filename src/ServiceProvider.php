@@ -2,6 +2,8 @@
 
 namespace Laravolt\Password;
 
+use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\ServiceProvider as BaseServiceProvider;
 
 /**
@@ -12,21 +14,15 @@ use Illuminate\Support\ServiceProvider as BaseServiceProvider;
 class ServiceProvider extends BaseServiceProvider
 {
     /**
-     * Indicates if loading of the provider is deferred.
-     *
-     * @var bool
-     */
-    protected $defer = false;
-
-    /**
      * Register the service provider.
      *
      * @return void
      */
     public function register()
     {
-        $this->app->singleton('password', function($app){
+        $this->app->singleton('password', function ($app) {
             $app['config']['auth.password.email'] = $app['config']['password.emails.reset'];
+
             return new Password($app['auth.password.broker'], $app['mailer'], $app['config']['password.emails.new']);
         });
     }
@@ -39,8 +35,13 @@ class ServiceProvider extends BaseServiceProvider
     public function boot()
     {
         $this->registerViews();
-        $this->registerMigrations();
-        $this->registerTranslations();
+
+        $this->publishes([
+            $this->packagePath('database/migrations/add_password_last_set_to_users.php') => $this->getMigrationFileName(),
+        ], 'migrations');
+
+        $this->loadTranslationsFrom($this->packagePath('resources/lang'), 'password');
+
         $this->registerConfigurations();
     }
 
@@ -51,38 +52,11 @@ class ServiceProvider extends BaseServiceProvider
      */
     protected function registerViews()
     {
-        // register views within the application with the set namespace
         $this->loadViewsFrom($this->packagePath('resources/views'), 'password');
-        // allow views to be published to the storage directory
+
         $this->publishes([
             $this->packagePath('resources/views') => base_path('resources/views/laravolt/password'),
         ], 'views');
-    }
-
-    /**
-     * Register the package migrations
-     *
-     * @return void
-     */
-    protected function registerMigrations()
-    {
-        if (version_compare($this->app->version(), '5.3.0', '>=')) {
-            $this->loadMigrationsFrom($this->packagePath('database/migrations'));
-        } else {
-            $this->publishes([
-                $this->packagePath('database/migrations') => database_path('/migrations')
-            ], 'migrations');
-        }
-    }
-
-    /**
-     * Register the package translations
-     *
-     * @return void
-     */
-    protected function registerTranslations()
-    {
-        $this->loadTranslationsFrom($this->packagePath('resources/lang'), 'password');
     }
 
     /**
@@ -103,11 +77,27 @@ class ServiceProvider extends BaseServiceProvider
     /**
      * Loads a path relative to the package base directory
      *
-     * @param string $path
+     * @param  string  $path
      * @return string
      */
     protected function packagePath($path = '')
     {
-        return sprintf("%s/../%s", __DIR__ , $path);
+        return sprintf("%s/../%s", __DIR__, $path);
+    }
+
+    /**
+     * Returns existing migration file if found, else uses the current timestamp.
+     *
+     * @return string
+     */
+    protected function getMigrationFileName(): string
+    {
+        $timestamp = date('Y_m_d_His');
+
+        return Collection::make($this->app->databasePath().DIRECTORY_SEPARATOR.'migrations'.DIRECTORY_SEPARATOR)
+            ->flatMap(function ($path) {
+                return File::glob($path.'*_add_password_last_set_to_users.php');
+            })->push($this->app->databasePath()."/migrations/{$timestamp}_add_password_last_set_to_users.php")
+            ->first();
     }
 }
