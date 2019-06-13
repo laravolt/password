@@ -18,8 +18,8 @@ class CheckPassword
             return $next($request);
         }
 
-        if(auth()->user()->passwordMustBeChanged(config('password.duration'))) {
-            return redirect(config('password.redirect'))->withWarning(trans('password::password.must_change_password'));
+        if(auth()->user()->passwordMustBeChanged(config('laravolt.password.duration'))) {
+            return redirect(config('laravolt.password.redirect'))->withWarning(trans('password::password.must_change_password'));
         }
 
         return $next($request);
@@ -27,7 +27,7 @@ class CheckPassword
 
     protected function shouldPassThrough($request)
     {
-        $except = array_merge((array) config('password.except'), (array) config('password.redirect'));
+        $except = array_merge((array) config('laravolt.password.except'), (array) config('laravolt.password.redirect'));
 
         foreach ($except as $pattern) {
             if ($request->is($pattern)) {

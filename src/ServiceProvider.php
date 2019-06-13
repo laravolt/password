@@ -72,10 +72,10 @@ class ServiceProvider extends BaseServiceProvider
     protected function bootConfigurations()
     {
         $this->mergeConfigFrom(
-            $this->packagePath('config/config.php'), 'password'
+            $this->packagePath('config/config.php'), 'laravolt.password'
         );
         $this->publishes([
-            $this->packagePath('config/config.php') => config_path('password.php'),
+            $this->packagePath('config/config.php') => config_path('laravolt/password.php'),
         ], 'config');
     }
 
