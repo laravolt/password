@@ -34,10 +34,10 @@ class ServiceProvider extends BaseServiceProvider
      */
     public function boot()
     {
+        $this->bootConfigurations();
         $this->bootViews();
         $this->bootMigrations();
         $this->bootTranslations();
-        $this->bootConfigurations();
     }
 
     /**
