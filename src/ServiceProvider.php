@@ -21,9 +21,9 @@ class ServiceProvider extends BaseServiceProvider
     public function register()
     {
         $this->app->singleton('password', function ($app) {
-            $app['config']['auth.password.email'] = $app['config']['password.emails.reset'];
+            $app['config']['auth.password.email'] = $app['config']['laravolt.password.emails.reset'];
 
-            return new Password($app['auth.password.broker'], $app['mailer'], $app['config']['password.emails.new']);
+            return new Password($app['auth.password.broker'], $app['mailer'], $app['config']['laravolt.password.emails.new']);
         });
     }
 
