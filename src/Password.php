@@ -1,6 +1,7 @@
 <?php
 namespace Laravolt\Password;
 
+use Illuminate\Auth\Passwords\TokenRepositoryInterface;
 use Illuminate\Contracts\Auth\CanResetPassword;
 use Illuminate\Contracts\Auth\PasswordBroker;
 use Illuminate\Contracts\Mail\Mailer;
@@ -8,7 +9,7 @@ use Illuminate\Mail\Message;
 
 class Password
 {
-    protected $passwordBroker;
+    protected $token;
 
     protected $mailer;
 
@@ -18,24 +19,22 @@ class Password
 
     /**
      * Password constructor.
-     * @param PasswordBroker $passwordBroker
+     * @param TokenRepositoryInterface  $token
      * @param Mailer $mailer
      * @param $newPasswordEmailView
      */
-    public function __construct(PasswordBroker $passwordBroker, Mailer $mailer, $newPasswordEmailView)
+    public function __construct(TokenRepositoryInterface $token, Mailer $mailer, $newPasswordEmailView)
     {
-        $this->passwordBroker = $passwordBroker;
+        $this->token = $token;
         $this->mailer = $mailer;
         $this->newPasswordEmailView = $newPasswordEmailView;
     }
 
     public function sendResetLink(CanResetPassword $user)
     {
-        $response = $this->passwordBroker->sendResetLink(['id' => $user['id']], function (Message $message) {
-            $message->subject(trans('passwords.reset'));
-        });
+        $user->sendPasswordResetNotification($this->token->create($user));
 
-        return $response;
+        return PasswordBroker::RESET_LINK_SENT;
     }
 
     /**

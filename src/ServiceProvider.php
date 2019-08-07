@@ -2,9 +2,11 @@
 
 namespace Laravolt\Password;
 
+use Illuminate\Auth\Passwords\DatabaseTokenRepository;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\ServiceProvider as BaseServiceProvider;
+use Illuminate\Support\Str;
 
 /**
  * Class PackageServiceProvider
@@ -22,8 +24,10 @@ class ServiceProvider extends BaseServiceProvider
     {
         $this->app->singleton('password', function ($app) {
             $app['config']['auth.password.email'] = $app['config']['laravolt.password.emails.reset'];
+            $config = $this->app['config']["auth.passwords.users"];
+            $token = $this->createTokenRepository($config);
 
-            return new Password($app['auth.password.broker'], $app['mailer'], $app['config']['laravolt.password.emails.new']);
+            return new Password($token, $app['mailer'], $app['config']['laravolt.password.emails.new']);
         });
     }
 
@@ -104,5 +108,30 @@ class ServiceProvider extends BaseServiceProvider
                 return File::glob($path.'*_add_password_last_set_to_users.php');
             })->push($this->app->databasePath()."/migrations/{$timestamp}_add_password_last_set_to_users.php")
             ->first();
+    }
+
+    /**
+     * Create a token repository instance based on the given configuration.
+     *
+     * @param  array  $config
+     * @return \Illuminate\Auth\Passwords\TokenRepositoryInterface
+     */
+    protected function createTokenRepository(array $config)
+    {
+        $key = $this->app['config']['app.key'];
+
+        if (Str::startsWith($key, 'base64:')) {
+            $key = base64_decode(substr($key, 7));
+        }
+
+        $connection = $config['connection'] ?? null;
+
+        return new DatabaseTokenRepository(
+            $this->app['db']->connection($connection),
+            $this->app['hash'],
+            $config['table'],
+            $key,
+            $config['expire']
+        );
     }
 }
