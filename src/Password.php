@@ -5,6 +5,8 @@ use Illuminate\Auth\Passwords\TokenRepositoryInterface;
 use Illuminate\Contracts\Auth\CanResetPassword;
 use Illuminate\Contracts\Auth\PasswordBroker;
 use Illuminate\Contracts\Mail\Mailer;
+use Illuminate\Support\Facades\DB;
+use UnexpectedValueException;
 
 class Password
 {
@@ -49,6 +51,34 @@ class Password
         $this->emailNewPassword($user, $newPassword);
 
         return true;
+    }
+
+    public function changePasswordByToken($user, $password, $token)
+    {
+        if (!$user instanceof CanResetPassword) {
+            throw new UnexpectedValueException('User must implement CanResetPassword interface.');
+        }
+
+        if (!$user instanceof CanChangePasswordContract) {
+            throw new UnexpectedValueException('User must implement CanChangePasswordContract interface.');
+        }
+
+        if (!$this->token->exists($user, $token)) {
+            return \Illuminate\Support\Facades\Password::INVALID_TOKEN;
+        }
+
+        return DB::transaction(function () use ($user, $password) {
+            $user->setPassword($password);
+            $this->token->delete($user);
+
+            return \Illuminate\Support\Facades\Password::PASSWORD_RESET;
+        });
+
+    }
+
+    public function resetTokenExists($token)
+    {
+
     }
 
     protected function generate($length = 8)
