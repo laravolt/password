@@ -5,7 +5,6 @@ use Illuminate\Auth\Passwords\TokenRepositoryInterface;
 use Illuminate\Contracts\Auth\CanResetPassword;
 use Illuminate\Contracts\Auth\PasswordBroker;
 use Illuminate\Contracts\Mail\Mailer;
-use Illuminate\Mail\Message;
 
 class Password
 {
