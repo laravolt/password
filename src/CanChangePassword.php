@@ -38,12 +38,12 @@ trait CanChangePassword
      */
     public function passwordMustBeChanged($durationInDays = null)
     {
-        if ($durationInDays === null) {
-            return false;
-        }
-
         if ($this->password_last_set === null) {
             return true;
+        }
+
+        if ($durationInDays === null) {
+            return false;
         }
 
         return $this->password_last_set->addDays((int)$durationInDays)->lte(Carbon::now());
