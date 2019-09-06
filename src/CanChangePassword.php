@@ -13,7 +13,6 @@ trait CanChangePassword
     public function setPassword($password, $mustBeChanged = false)
     {
         $this->password = bcrypt($password);
-        $this->password_last_set = new Carbon();
 
         if ($mustBeChanged) {
             $this->password_last_set = null;
