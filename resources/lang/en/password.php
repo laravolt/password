@@ -6,4 +6,5 @@ return [
     'change_password_on_first_login' => 'Force to change password on first login',
     'must_change_password'           => 'For security reason, please change your password first.',
     'reset_link_mail_subject'        => 'Reset Password',
+    'new_password_mail_subject'      => 'Password Changed by Administrator',
 ];

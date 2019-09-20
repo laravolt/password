@@ -6,6 +6,7 @@ use Illuminate\Contracts\Auth\CanResetPassword;
 use Illuminate\Contracts\Auth\PasswordBroker;
 use Illuminate\Contracts\Mail\Mailer;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
 use UnexpectedValueException;
 
 class Password
@@ -14,21 +15,15 @@ class Password
 
     protected $mailer;
 
-    protected $newPasswordEmailView;
-
-    protected $resetPasswordEmailView;
-
     /**
      * Password constructor.
      * @param TokenRepositoryInterface  $token
      * @param Mailer $mailer
-     * @param $newPasswordEmailView
      */
-    public function __construct(TokenRepositoryInterface $token, Mailer $mailer, $newPasswordEmailView)
+    public function __construct(TokenRepositoryInterface $token, Mailer $mailer)
     {
         $this->token = $token;
         $this->mailer = $mailer;
-        $this->newPasswordEmailView = $newPasswordEmailView;
     }
 
     public function sendResetLink(CanResetPassword $user)
@@ -88,9 +83,6 @@ class Password
 
     protected function emailNewPassword(CanChangePasswordContract $user, $password)
     {
-        $view = $this->newPasswordEmailView;
-        $this->mailer->send($view, compact('user', 'password'), function($m) use ($user) {
-            $m->to($user->getEmailForNewPassword());
-        });
+        Mail::to($user)->send(new NewPasswordMail($password));
     }
 }

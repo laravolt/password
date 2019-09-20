@@ -27,7 +27,7 @@ class ServiceProvider extends BaseServiceProvider
             $config = $this->app['config']["auth.passwords.users"];
             $token = $this->createTokenRepository($config);
 
-            return new Password($token, $app['mailer'], $app['config']['laravolt.password.emails.new']);
+            return new Password($token, $app['mailer']);
         });
     }
 
