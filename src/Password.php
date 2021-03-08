@@ -28,9 +28,7 @@ class Password
 
     public function sendResetLink(CanResetPassword $user)
     {
-        $user->sendPasswordResetNotification($this->token->create($user));
-
-        return PasswordBroker::RESET_LINK_SENT;
+        return $user->sendPasswordResetNotification($this->token->create($user));
     }
 
     /**
