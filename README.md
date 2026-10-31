@@ -1,3 +1,5 @@
+> **Archived.** This repository is no longer maintained. Its functionality lives in [laravolt/laravolt](https://github.com/laravolt/laravolt) (Laravolt v7+, `composer require laravolt/laravolt`). Docs: https://laravolt.dev
+
 # laravolt/password
 Laravel password extended
 
@@ -26,4 +28,3 @@ Contoh: Akjd986&788*#dkD7
 ### easy
 Mudah diingat dan diucapkan, cocok untuk pembuatan password secara masal dan dibagikan secara verbal.
 Contoh: veruzavo, hanacaraka
-
